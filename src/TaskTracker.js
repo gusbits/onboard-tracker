@@ -135,7 +135,9 @@ export default class TaskTracker extends React.Component {
       .then((res) => res.json())
       .then(
         (response) => {
-          this.setState({ users: response });
+          this.setState({
+            users: response
+          });
         },
         (error) => {
           console.log(error);
@@ -165,7 +167,7 @@ export default class TaskTracker extends React.Component {
     //console.log("user " + u.id);
   }
 
-  renderTasks(u) {
+  filterTasks(u) {
     const tasks = this.state.tasks;
     const userTasks = tasks.filter((task) => task.userId === u.id);
     return userTasks;
@@ -173,9 +175,10 @@ export default class TaskTracker extends React.Component {
 
   render() {
     const users = this.state.users;
+    const tasks = this.state.tasks;
     const userSelected = this.state.userSelected;
     if (userSelected) {
-      const userTasks = this.renderTasks(userSelected);
+      const userTasks = this.filterTasks(userSelected);
       //console.log(userTasks);
       return (
         <div className="container mt-5">
@@ -198,7 +201,11 @@ export default class TaskTracker extends React.Component {
           </div>
         </div>
       );
-    } else if (users) {
+    } else if (users && tasks) {
+      users[0].active = true;
+      this.setState({ userSelected: users[0] });
+
+      const userTasks = this.filterTasks(users[0]);
       return (
         <div className="container mt-5">
           <h1 className="text-center">Onboarding Tracker</h1>
@@ -213,6 +220,9 @@ export default class TaskTracker extends React.Component {
                   />
                 ))}
               </div>
+            </div>
+            <div className="col-6">
+              <TaskList tasks={userTasks} />
             </div>
           </div>
         </div>
